@@ -1,0 +1,11 @@
+{
+  "name": "HVAC Doctor AI",
+  "short_name": "HVAC Doctor",
+  "description": "Smart AI-guided HVAC diagnostic assistant.",
+  "start_url": "/hvac-doctor-ai/",
+  "scope": "/hvac-doctor-ai/",
+  "display": "standalone",
+  "background_color": "#06111f",
+  "theme_color": "#06111f",
+  "orientation": "portrait-primary"
+}
