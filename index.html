@@ -1,13 +1,15 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
   <title>HVAC Doctor AI | Smart HVAC Diagnosis</title>
 
-  <meta name="description"
-        content="HVAC Doctor AI helps homeowners diagnose common air conditioning and heating problems with an intelligent step-by-step assistant.">
+  <meta
+    name="description"
+    content="HVAC Doctor AI helps homeowners diagnose common air conditioning and heating problems with guided troubleshooting."
+  />
 
   <style>
     * {
@@ -18,18 +20,24 @@
 
     body {
       font-family: Arial, Helvetica, sans-serif;
-      background: #07111f;
+      background:
+        radial-gradient(circle at top right, rgba(14,165,233,.12), transparent 35%),
+        #06111f;
       color: white;
       min-height: 100vh;
     }
 
     header {
-      background: #0b1728;
-      border-bottom: 1px solid #1f334b;
-      padding: 18px 7%;
+      background: rgba(7, 17, 31, 0.95);
+      border-bottom: 1px solid #1d3650;
+      padding: 18px 6%;
       display: flex;
       justify-content: space-between;
       align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      backdrop-filter: blur(10px);
     }
 
     .logo {
@@ -42,28 +50,35 @@
       color: white;
     }
 
-    .badge {
-      background: #12304b;
-      color: #7dd3fc;
-      padding: 8px 14px;
-      border-radius: 20px;
+    .status {
       font-size: 13px;
+      color: #86efac;
+      border: 1px solid #1f5f42;
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: #0b241b;
     }
 
     .hero {
       text-align: center;
-      padding: 70px 20px 40px;
-      max-width: 900px;
+      padding: 70px 20px 35px;
+      max-width: 950px;
       margin: auto;
     }
 
-    .icon {
-      font-size: 60px;
+    .hero-badge {
+      display: inline-block;
       margin-bottom: 18px;
+      background: #0f2c45;
+      color: #7dd3fc;
+      border: 1px solid #1f4c6e;
+      padding: 9px 15px;
+      border-radius: 999px;
+      font-size: 14px;
     }
 
     h1 {
-      font-size: clamp(38px, 7vw, 68px);
+      font-size: clamp(40px, 7vw, 72px);
       line-height: 1.05;
       margin-bottom: 20px;
     }
@@ -75,92 +90,193 @@
     .hero p {
       color: #a9bdd2;
       font-size: 19px;
-      line-height: 1.6;
-      max-width: 700px;
+      line-height: 1.7;
+      max-width: 760px;
       margin: auto;
     }
 
-    .diagnostic {
-      max-width: 760px;
-      margin: 25px auto 60px;
-      background: #0e1d30;
-      border: 1px solid #203852;
-      border-radius: 22px;
+    .app {
+      width: min(920px, 92%);
+      margin: 25px auto 55px;
+      background: rgba(13, 29, 48, 0.95);
+      border: 1px solid #203d5d;
+      border-radius: 24px;
       padding: 30px;
-      box-shadow: 0 20px 60px rgba(0,0,0,.35);
+      box-shadow: 0 25px 70px rgba(0,0,0,.38);
     }
 
-    .diagnostic h2 {
+    .progress-wrap {
+      margin-bottom: 30px;
+    }
+
+    .progress-text {
+      display: flex;
+      justify-content: space-between;
+      color: #91a9bf;
+      font-size: 14px;
       margin-bottom: 8px;
+    }
+
+    .progress-bar {
+      height: 8px;
+      background: #081522;
+      border-radius: 999px;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      width: 25%;
+      background: linear-gradient(90deg, #0ea5e9, #38bdf8);
+      transition: .3s;
+    }
+
+    .question {
+      margin-bottom: 26px;
+    }
+
+    .question h2 {
       font-size: 27px;
+      margin-bottom: 8px;
     }
 
-    .diagnostic .subtitle {
-      color: #93a9bf;
-      margin-bottom: 25px;
-    }
-
-    label {
-      display: block;
-      margin-bottom: 10px;
-      font-weight: bold;
-    }
-
-    select {
-      width: 100%;
-      background: #081524;
-      color: white;
-      border: 1px solid #29435e;
-      padding: 16px;
-      border-radius: 10px;
-      font-size: 16px;
+    .question p {
+      color: #9cb0c4;
+      line-height: 1.6;
       margin-bottom: 20px;
     }
 
-    button {
-      width: 100%;
-      border: none;
-      background: #0ea5e9;
+    .options {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 14px;
+    }
+
+    .option {
+      background: #081522;
+      border: 1px solid #27435f;
       color: white;
-      padding: 17px;
-      border-radius: 11px;
-      font-size: 17px;
+      padding: 18px;
+      border-radius: 14px;
+      cursor: pointer;
+      text-align: left;
+      font-size: 16px;
+      transition: .2s;
+    }
+
+    .option:hover,
+    .option.active {
+      border-color: #38bdf8;
+      background: #0d2940;
+      transform: translateY(-1px);
+    }
+
+    .controls {
+      display: flex;
+      gap: 12px;
+      margin-top: 25px;
+    }
+
+    .btn {
+      border: none;
+      padding: 15px 20px;
+      border-radius: 12px;
+      font-size: 16px;
       font-weight: bold;
       cursor: pointer;
     }
 
-    button:hover {
-      background: #0284c7;
+    .btn-primary {
+      background: #0ea5e9;
+      color: white;
+      flex: 1;
     }
 
-    #result {
+    .btn-secondary {
+      background: #15273a;
+      color: white;
+      border: 1px solid #29445f;
+    }
+
+    .btn:disabled {
+      opacity: .45;
+      cursor: not-allowed;
+    }
+
+    .result {
       display: none;
-      margin-top: 22px;
-      background: #081524;
-      border-left: 4px solid #38bdf8;
-      padding: 20px;
-      border-radius: 8px;
-      line-height: 1.6;
+    }
+
+    .result-card {
+      background: #081522;
+      border: 1px solid #27435f;
+      border-radius: 18px;
+      padding: 24px;
+      margin-top: 18px;
+    }
+
+    .result-card h3 {
+      color: #7dd3fc;
+      margin-bottom: 12px;
+      font-size: 22px;
+    }
+
+    .result-card p,
+    .result-card li {
+      color: #c3d1df;
+      line-height: 1.65;
+    }
+
+    .result-card ul {
+      padding-left: 20px;
+      margin: 12px 0;
+    }
+
+    .severity {
+      display: inline-block;
+      margin-top: 12px;
+      padding: 8px 12px;
+      border-radius: 999px;
+      font-size: 13px;
+      font-weight: bold;
+    }
+
+    .low {
+      background: #0c2d20;
+      color: #86efac;
+      border: 1px solid #206044;
+    }
+
+    .medium {
+      background: #33290d;
+      color: #fde68a;
+      border: 1px solid #6b5317;
+    }
+
+    .high {
+      background: #321313;
+      color: #fca5a5;
+      border: 1px solid #713030;
     }
 
     .features {
-      max-width: 1000px;
+      width: min(1000px, 92%);
       margin: auto;
-      padding: 20px 20px 70px;
       display: grid;
       grid-template-columns: repeat(3, 1fr);
       gap: 18px;
+      padding-bottom: 45px;
     }
 
     .feature {
-      background: #0e1d30;
-      border: 1px solid #203852;
-      border-radius: 16px;
-      padding: 25px;
+      background: #0c1c2d;
+      border: 1px solid #1f3954;
+      border-radius: 18px;
+      padding: 24px;
     }
 
-    .feature .emoji {
-      font-size: 30px;
+    .feature .icon {
+      font-size: 32px;
       margin-bottom: 12px;
     }
 
@@ -169,45 +285,49 @@
     }
 
     .feature p {
-      color: #9db1c5;
-      line-height: 1.5;
+      color: #99aec2;
+      line-height: 1.6;
     }
 
     .warning {
-      max-width: 900px;
-      margin: 0 auto 50px;
+      width: min(950px, 92%);
+      margin: 0 auto 45px;
       padding: 18px;
-      background: #251c0b;
-      border: 1px solid #664b16;
-      border-radius: 12px;
-      color: #f5d88a;
       text-align: center;
-      line-height: 1.5;
+      background: #2a220e;
+      border: 1px solid #6c561d;
+      color: #f5dc91;
+      border-radius: 14px;
+      line-height: 1.6;
     }
 
     footer {
-      text-align: center;
+      border-top: 1px solid #1c334b;
       padding: 30px;
-      border-top: 1px solid #1f334b;
-      color: #71869c;
+      text-align: center;
+      color: #71859a;
     }
 
-    @media(max-width: 750px) {
+    @media (max-width: 720px) {
+      .options,
       .features {
         grid-template-columns: 1fr;
       }
 
-      header {
-        padding: 16px 20px;
+      .app {
+        padding: 20px;
       }
 
-      .badge {
+      .status {
         display: none;
       }
 
-      .diagnostic {
-        margin-left: 15px;
-        margin-right: 15px;
+      .controls {
+        flex-direction: column;
+      }
+
+      .btn-secondary {
+        order: 2;
       }
     }
   </style>
@@ -217,109 +337,85 @@
 
 <header>
   <div class="logo">HVAC <span>Doctor AI</span></div>
-  <div class="badge">AI-Powered HVAC Assistant</div>
+  <div class="status">● Diagnostic System Online</div>
 </header>
 
 <section class="hero">
-
-  <div class="icon">❄️🔧</div>
+  <div class="hero-badge">AI-Guided HVAC Troubleshooting</div>
 
   <h1>
-    Diagnose Your HVAC Problem
+    Find Out What May Be Wrong
     <span>Before Calling for Service</span>
   </h1>
 
   <p>
-    Answer a few simple questions about your air conditioning
-    or heating system and HVAC Doctor AI will guide you through
-    possible causes and safe next steps.
+    Answer a few simple questions about your HVAC system.
+    HVAC Doctor AI will guide you through possible causes,
+    safe checks, and when professional service may be needed.
   </p>
-
 </section>
 
-<section class="diagnostic">
+<section class="app">
 
-  <h2>Start Your Diagnosis</h2>
+  <div class="progress-wrap">
+    <div class="progress-text">
+      <span id="stepText">Step 1 of 4</span>
+      <span id="percentText">25%</span>
+    </div>
 
-  <p class="subtitle">
-    What problem are you experiencing?
-  </p>
+    <div class="progress-bar">
+      <div class="progress-fill" id="progressFill"></div>
+    </div>
+  </div>
 
-  <label for="problem">Select the main symptom:</label>
+  <div id="questionArea"></div>
 
-  <select id="problem">
+  <div class="controls">
+    <button class="btn btn-secondary" id="backBtn" onclick="previousStep()">
+      Back
+    </button>
 
-    <option value="">Choose a problem...</option>
+    <button class="btn btn-primary" id="nextBtn" onclick="nextStep()" disabled>
+      Continue
+    </button>
+  </div>
 
-    <option value="notcooling">
-      AC is running but not cooling
-    </option>
-
-    <option value="notrunning">
-      AC will not turn on
-    </option>
-
-    <option value="weakair">
-      Weak airflow from vents
-    </option>
-
-    <option value="water">
-      Water leaking from AC
-    </option>
-
-    <option value="noise">
-      AC is making unusual noises
-    </option>
-
-    <option value="frozen">
-      AC unit or refrigerant line is frozen
-    </option>
-
-  </select>
-
-  <button onclick="diagnose()">
-    Diagnose My HVAC Problem
-  </button>
-
-  <div id="result"></div>
+  <div class="result" id="result"></div>
 
 </section>
 
 <section class="features">
 
   <div class="feature">
-    <div class="emoji">🤖</div>
-    <h3>Smart Diagnosis</h3>
+    <div class="icon">🤖</div>
+    <h3>Guided Diagnosis</h3>
     <p>
-      Follow an intelligent troubleshooting process based on
-      the symptoms your HVAC system is experiencing.
+      A structured question flow helps narrow down common HVAC issues.
     </p>
   </div>
 
   <div class="feature">
-    <div class="emoji">💰</div>
-    <h3>Avoid Unnecessary Costs</h3>
+    <div class="icon">💰</div>
+    <h3>Save Time & Money</h3>
     <p>
-      Learn about simple checks you can perform before paying
-      for a service visit.
+      Identify simple issues that may be resolved before scheduling a service visit.
     </p>
   </div>
 
   <div class="feature">
-    <div class="emoji">🛡️</div>
+    <div class="icon">🛡️</div>
     <h3>Safety First</h3>
     <p>
-      HVAC Doctor AI identifies situations where you should
-      stop troubleshooting and contact a qualified technician.
+      The system tells you when to stop troubleshooting and contact a qualified technician.
     </p>
   </div>
 
 </section>
 
 <div class="warning">
-  ⚠️ HVAC Doctor AI provides general troubleshooting guidance.
-  Never work on high-voltage electrical components, refrigerant
-  circuits, or equipment you are not qualified to service.
+  ⚠️ HVAC Doctor AI provides general educational troubleshooting guidance only.
+  Never open electrical panels, handle refrigerant, bypass safety devices,
+  or perform work you are not qualified to perform.
 </div>
 
 <footer>
@@ -327,100 +423,347 @@
 </footer>
 
 <script>
+  const questions = [
+    {
+      title: "What is the main problem?",
+      text: "Choose the symptom that best matches what your HVAC system is doing.",
+      key: "problem",
+      options: [
+        ["notcooling", "❄️ AC runs but does not cool"],
+        ["notrunning", "⚡ AC will not turn on"],
+        ["weakair", "💨 Weak airflow from vents"],
+        ["water", "💧 Water leaking"],
+        ["noise", "🔊 Unusual noise"],
+        ["frozen", "🧊 Frozen coil or refrigerant line"]
+      ]
+    },
+    {
+      title: "What is the thermostat doing?",
+      text: "This helps us determine whether the system is receiving a normal cooling command.",
+      key: "thermostat",
+      options: [
+        ["cool", "Set to COOL and below room temperature"],
+        ["blank", "Thermostat screen is blank"],
+        ["normal", "Thermostat appears normal"],
+        ["unknown", "Not sure"]
+      ]
+    },
+    {
+      title: "What is the indoor airflow like?",
+      text: "Tell us what you notice at the supply vents.",
+      key: "airflow",
+      options: [
+        ["normal", "Normal airflow"],
+        ["weak", "Weak airflow"],
+        ["none", "No airflow"],
+        ["unknown", "Not sure"]
+      ]
+    },
+    {
+      title: "What is the outdoor unit doing?",
+      text: "Only observe the unit from a safe distance. Do not open any panels.",
+      key: "outdoor",
+      options: [
+        ["running", "Fan appears to be running"],
+        ["off", "Outdoor unit is not running"],
+        ["noise", "Running but making unusual noise"],
+        ["unknown", "Not sure"]
+      ]
+    }
+  ];
 
-function diagnose() {
+  let currentStep = 0;
+  let answers = {};
 
-  const problem = document.getElementById("problem").value;
-  const result = document.getElementById("result");
+  function renderQuestion() {
+    const q = questions[currentStep];
+    const area = document.getElementById("questionArea");
 
-  if (!problem) {
+    let html = `
+      <div class="question">
+        <h2>${q.title}</h2>
+        <p>${q.text}</p>
+        <div class="options">
+    `;
+
+    q.options.forEach(option => {
+      const active = answers[q.key] === option[0] ? "active" : "";
+
+      html += `
+        <button
+          class="option ${active}"
+          onclick="selectOption('${q.key}','${option[0]}', this)">
+          ${option[1]}
+        </button>
+      `;
+    });
+
+    html += `</div></div>`;
+
+    area.innerHTML = html;
+
+    updateProgress();
+
+    document.getElementById("backBtn").style.visibility =
+      currentStep === 0 ? "hidden" : "visible";
+
+    document.getElementById("nextBtn").disabled = !answers[q.key];
+
+    document.getElementById("nextBtn").innerText =
+      currentStep === questions.length - 1
+        ? "See My Diagnosis"
+        : "Continue";
+  }
+
+  function selectOption(key, value, element) {
+    answers[key] = value;
+
+    document.querySelectorAll(".option").forEach(btn => {
+      btn.classList.remove("active");
+    });
+
+    element.classList.add("active");
+
+    document.getElementById("nextBtn").disabled = false;
+  }
+
+  function nextStep() {
+    if (currentStep < questions.length - 1) {
+      currentStep++;
+      renderQuestion();
+    } else {
+      showDiagnosis();
+    }
+  }
+
+  function previousStep() {
+    if (currentStep > 0) {
+      currentStep--;
+      renderQuestion();
+    }
+  }
+
+  function updateProgress() {
+    const percent = Math.round(
+      ((currentStep + 1) / questions.length) * 100
+    );
+
+    document.getElementById("stepText").innerText =
+      `Step ${currentStep + 1} of ${questions.length}`;
+
+    document.getElementById("percentText").innerText =
+      `${percent}%`;
+
+    document.getElementById("progressFill").style.width =
+      `${percent}%`;
+  }
+
+  function showDiagnosis() {
+    const result = document.getElementById("result");
+    const questionArea = document.getElementById("questionArea");
+
+    questionArea.style.display = "none";
+    document.querySelector(".controls").style.display = "none";
+
+    let title = "";
+    let causes = [];
+    let steps = [];
+    let severity = "low";
+    let severityText = "Low Urgency";
+
+    switch (answers.problem) {
+
+      case "notcooling":
+        title = "Cooling Performance Problem";
+        causes = [
+          "Dirty or restricted air filter",
+          "Dirty outdoor condenser coil",
+          "Frozen evaporator coil",
+          "Low airflow",
+          "Refrigerant or compressor-related issue"
+        ];
+        steps = [
+          "Verify thermostat is set to COOL.",
+          "Check and replace a dirty air filter.",
+          "Make sure supply and return vents are open.",
+          "Look for visible ice on refrigerant lines.",
+          "If the system still does not cool, professional diagnosis may be needed."
+        ];
+        severity = "medium";
+        severityText = "Service May Be Needed";
+        break;
+
+      case "notrunning":
+        title = "System Not Starting";
+        causes = [
+          "Thermostat or battery issue",
+          "Tripped HVAC circuit breaker",
+          "Service disconnect or switch turned off",
+          "Condensate safety switch activated",
+          "Electrical or control failure"
+        ];
+        steps = [
+          "Confirm thermostat settings.",
+          "Check thermostat batteries if applicable.",
+          "Check the HVAC breaker once.",
+          "Do not repeatedly reset a breaker that trips.",
+          "Contact a qualified technician if power continues to fail."
+        ];
+        severity = "high";
+        severityText = "Electrical Caution";
+        break;
+
+      case "weakair":
+        title = "Low Airflow Problem";
+        causes = [
+          "Dirty filter",
+          "Blocked supply or return vents",
+          "Dirty evaporator coil",
+          "Blower motor issue",
+          "Duct restriction or leakage"
+        ];
+        steps = [
+          "Inspect the air filter.",
+          "Open all supply vents.",
+          "Make sure return grilles are not blocked.",
+          "If airflow stays weak, schedule professional inspection."
+        ];
+        severity = "medium";
+        severityText = "Needs Attention";
+        break;
+
+      case "water":
+        title = "Condensate Drainage Problem";
+        causes = [
+          "Clogged condensate drain",
+          "Damaged or overflowing drain pan",
+          "Frozen coil thawing",
+          "Drain line or condensate pump issue"
+        ];
+        steps = [
+          "Turn cooling off if water is near electrical equipment.",
+          "Check for obvious water around the air handler.",
+          "Do not open electrical compartments.",
+          "Have the drainage system inspected if leaking continues."
+        ];
+        severity = "medium";
+        severityText = "Water Damage Risk";
+        break;
+
+      case "noise":
+        title = "Mechanical or Airflow Noise";
+        causes = [
+          "Loose panel",
+          "Blower wheel problem",
+          "Fan motor issue",
+          "Outdoor fan problem",
+          "Compressor or mechanical failure"
+        ];
+        steps = [
+          "Listen from a safe distance.",
+          "Do not remove panels while the system is operating.",
+          "Shut the system off if you hear grinding or severe vibration.",
+          "Schedule service for persistent mechanical noise."
+        ];
+        severity = "high";
+        severityText = "Mechanical Caution";
+        break;
+
+      case "frozen":
+        title = "Frozen HVAC System";
+        causes = [
+          "Restricted airflow",
+          "Dirty air filter",
+          "Dirty evaporator coil",
+          "Blower failure",
+          "Refrigerant problem"
+        ];
+        steps = [
+          "Turn COOL mode off.",
+          "Allow the ice to thaw naturally.",
+          "Do not chip or scrape ice from the coil.",
+          "Inspect the air filter.",
+          "Call a technician if freezing returns."
+        ];
+        severity = "medium";
+        severityText = "Do Not Continue Cooling";
+        break;
+    }
+
+    let extra = "";
+
+    if (answers.airflow === "none") {
+      extra +=
+        "<p><strong>Important:</strong> You reported no indoor airflow. A blower or control issue may be present.</p>";
+    }
+
+    if (answers.outdoor === "off") {
+      extra +=
+        "<p><strong>Outdoor unit:</strong> You reported that the outdoor unit is not running. Electrical or control diagnosis may be required.</p>";
+    }
+
+    if (answers.thermostat === "blank") {
+      extra +=
+        "<p><strong>Thermostat:</strong> A blank thermostat may indicate lost control power, batteries, or an HVAC electrical issue.</p>";
+    }
+
+    result.innerHTML = `
+      <div class="result-card">
+        <h3>${title}</h3>
+
+        <p>
+          Based on your answers, these are some of the most common possibilities:
+        </p>
+
+        <ul>
+          ${causes.map(cause => `<li>${cause}</li>`).join("")}
+        </ul>
+
+        <h3>Recommended Next Steps</h3>
+
+        <ul>
+          ${steps.map(step => `<li>${step}</li>`).join("")}
+        </ul>
+
+        ${extra}
+
+        <span class="severity ${severity}">
+          ${severityText}
+        </span>
+      </div>
+
+      <button
+        class="btn btn-primary"
+        style="margin-top:18px;width:100%;"
+        onclick="restartDiagnosis()">
+        Start New Diagnosis
+      </button>
+    `;
+
     result.style.display = "block";
-    result.innerHTML =
-      "<strong>Please select a symptom first.</strong>";
-    return;
+
+    document.getElementById("stepText").innerText =
+      "Diagnosis Complete";
+
+    document.getElementById("percentText").innerText =
+      "100%";
+
+    document.getElementById("progressFill").style.width =
+      "100%";
   }
 
-  let message = "";
+  function restartDiagnosis() {
+    currentStep = 0;
+    answers = {};
 
-  if (problem === "notcooling") {
+    document.getElementById("result").style.display = "none";
+    document.getElementById("questionArea").style.display = "block";
+    document.querySelector(".controls").style.display = "flex";
 
-    message =
-      "<strong>Possible causes:</strong><br><br>" +
-      "• Dirty air filter<br>" +
-      "• Thermostat setting problem<br>" +
-      "• Dirty outdoor condenser<br>" +
-      "• Frozen evaporator coil<br>" +
-      "• Refrigerant or mechanical issue<br><br>" +
-      "<strong>First step:</strong> Check your thermostat and air filter.";
-
+    renderQuestion();
   }
 
-  else if (problem === "notrunning") {
-
-    message =
-      "<strong>Start with these checks:</strong><br><br>" +
-      "• Verify the thermostat is set to COOL<br>" +
-      "• Check thermostat batteries<br>" +
-      "• Check the HVAC circuit breaker<br>" +
-      "• Make sure the indoor service switch is on<br><br>" +
-      "If the breaker repeatedly trips, stop and contact a qualified technician.";
-
-  }
-
-  else if (problem === "weakair") {
-
-    message =
-      "<strong>Possible causes:</strong><br><br>" +
-      "• Clogged air filter<br>" +
-      "• Closed or blocked vents<br>" +
-      "• Dirty evaporator coil<br>" +
-      "• Blower motor problem<br>" +
-      "• Ductwork restriction or leak<br><br>" +
-      "<strong>First step:</strong> Inspect the air filter and make sure supply vents are open.";
-
-  }
-
-  else if (problem === "water") {
-
-    message =
-      "<strong>Common causes:</strong><br><br>" +
-      "• Clogged condensate drain<br>" +
-      "• Full or damaged drain pan<br>" +
-      "• Frozen coil beginning to thaw<br><br>" +
-      "Turn the system off if water could reach electrical components.";
-
-  }
-
-  else if (problem === "noise") {
-
-    message =
-      "<strong>Unusual HVAC noises can indicate:</strong><br><br>" +
-      "• Loose panels or components<br>" +
-      "• Blower wheel problem<br>" +
-      "• Fan motor problem<br>" +
-      "• Compressor or mechanical failure<br><br>" +
-      "Grinding, electrical buzzing, or severe vibration should be inspected by a qualified technician.";
-
-  }
-
-  else if (problem === "frozen") {
-
-    message =
-      "<strong>A frozen system may be caused by:</strong><br><br>" +
-      "• Restricted airflow<br>" +
-      "• Dirty air filter<br>" +
-      "• Dirty evaporator coil<br>" +
-      "• Blower problem<br>" +
-      "• Refrigerant issue<br><br>" +
-      "<strong>Recommended action:</strong> Turn cooling OFF and allow the system to thaw. Do not chip ice from the coil.";
-
-  }
-
-  result.innerHTML = message;
-  result.style.display = "block";
-
-}
-
+  renderQuestion();
 </script>
 
 </body>
