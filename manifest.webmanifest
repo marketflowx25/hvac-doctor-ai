@@ -10,7 +10,7 @@
   "orientation": "portrait-primary",
   "icons": [
     {
-      "src": "icon-192.png",
+      "src": "hvac-doctor-ai logo.png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "any"
